@@ -5,7 +5,7 @@ import statsmodels.api as sm
 def calculate_beta(high_low_minute_data, mode='full'):
   '''
   Calculate beta as the delta of high_t and low_t
-  :param high_low_minute_data: DataFrame (stacked), high and low minute data, need to have columns ['Date', 'Ticker', 'high', 'low']
+  :param high_low_minute_data: DataFrame (stacked), high and low minute data, need to have columns ['Date', 'Ticker', 'High', 'Low']
   :param mode: str, 'full' or 'opening' or 'closing'; 'full' for full day, 'opening' first 50-min, 'closing' for last 50-min, in a day
   :return: dict, beta_dict containing date, ticker, and the result beta
   '''
@@ -46,16 +46,16 @@ def calculate_beta_per_ticker(high_low_minute_data, ticker):
     for hour, df_hour in hl_df_per_hour:
 
       # y = high_t
-      y = df_hour['high']
+      y = df_hour['High']
 
       # x = low_t
-      x = df_hour['low']
+      x = df_hour['Low']
       x = sm.add_constant(x)
 
       try:
         # regression
         result = sm.OLS(y, x).fit()
-        beta = result.params['low']
+        beta = result.params['Low']
         beta_dict['Date'].append(date.date())
         beta_dict['Ticker'].append(ticker)
         beta_dict['betas'].append(beta)
@@ -93,8 +93,8 @@ def calculate_beta_opening_closing_hour_per_ticker(high_low_combined, ticker, ti
 
     try:
       # opening hour beta
-      y = period_df['high']
-      x = period_df['low']
+      y = period_df['High']
+      x = period_df['Low']
       x = sm.add_constant(x)
       result1 = sm.OLS(y, x).fit()
       beta = result1.params['low']
